@@ -199,27 +199,27 @@ const sidebarFR = [
 
 export default defineConfig({
   root: 'docs',
-  title: 'rs-grid',
+  title: 'Ruxelion',
   description: 'High-performance Rust/WASM data grid engine for the web',
   icon: '/images/favicon.svg',
   logo: {
     dark: '/images/logo-dark.svg',
     light: '/images/logo-light.svg',
   },
-  logoText: 'rs-grid',
+  logoText: 'Ruxelion',
   lang: 'en',
   locales: [
     {
       lang: 'en',
       label: 'English',
-      title: 'rs-grid',
+      title: 'Ruxelion',
       description:
         'High-performance Rust/WASM data grid engine for the web',
     },
     {
       lang: 'fr',
       label: 'Français',
-      title: 'rs-grid',
+      title: 'Ruxelion',
       description:
         'Moteur de data grid Rust/WASM haute performance pour le web',
     },
@@ -263,11 +263,11 @@ export default defineConfig({
       {
         icon: 'github',
         mode: 'link',
-        content: 'https://github.com/bpodwinski/rs-grid',
+        content: 'https://github.com/ruxelion/rs-grid',
       },
     ],
     footer: {
-      message: '© 2025 rs-grid. Open source under MIT license.',
+      message: '© 2025 Ruxelion. Open source under MIT license.',
     },
   },
   globalStyles: path.join(__dirname, 'theme', 'index.css'),
