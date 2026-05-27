@@ -199,27 +199,27 @@ const sidebarFR = [
 
 export default defineConfig({
   root: 'docs',
-  title: 'Ruxelion',
+  title: 'rs-grid',
   description: 'High-performance Rust/WASM data grid engine for the web',
   icon: '/images/favicon.svg',
   logo: {
     dark: '/images/logo-dark.svg',
     light: '/images/logo-light.svg',
   },
-  logoText: 'Ruxelion',
+  logoText: 'rs-grid',
   lang: 'en',
   locales: [
     {
       lang: 'en',
       label: 'English',
-      title: 'Ruxelion',
+      title: 'rs-grid',
       description:
         'High-performance Rust/WASM data grid engine for the web',
     },
     {
       lang: 'fr',
       label: 'Français',
-      title: 'Ruxelion',
+      title: 'rs-grid',
       description:
         'Moteur de data grid Rust/WASM haute performance pour le web',
     },
