@@ -180,7 +180,7 @@ export default function HomeLayout() {
               <ArrowIcon />
             </a>
             <a
-              href="https://github.com/bpodwinski/rs-grid"
+              href="https://github.com/ruxelion/rs-grid"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.btnOutline}
@@ -214,8 +214,20 @@ export default function HomeLayout() {
         </div>
       </section>
 
+      {/* Live Demo */}
+      <section id="demo" className={styles.section}>
+        <div className={styles.container}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>{t('demo.tag')}</span>
+            <h2 className={styles.sectionTitle}>{t('demo.title')}</h2>
+            <p className={styles.sectionSub}>{t('demo.sub')}</p>
+          </div>
+          <GridDemo t={t} />
+        </div>
+      </section>
+
       {/* Features */}
-      <section className={styles.section}>
+      <section className={`${styles.section} ${styles.sectionAlt}`}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionTag}>{t('features.tag')}</span>
@@ -245,7 +257,7 @@ export default function HomeLayout() {
       </section>
 
       {/* Architecture */}
-      <section className={`${styles.section} ${styles.sectionAlt}`}>
+      <section className={styles.section}>
         <div className={styles.container}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionTag}>{t('arch.tag')}</span>
@@ -282,18 +294,6 @@ export default function HomeLayout() {
         </div>
       </section>
 
-      {/* Live Demo */}
-      <section id="demo" className={styles.section}>
-        <div className={styles.container}>
-          <div className={styles.sectionHeader}>
-            <span className={styles.sectionTag}>{t('demo.tag')}</span>
-            <h2 className={styles.sectionTitle}>{t('demo.title')}</h2>
-            <p className={styles.sectionSub}>{t('demo.sub')}</p>
-          </div>
-          <GridDemo t={t} />
-        </div>
-      </section>
-
       {/* CTA */}
       <section className={`${styles.section} ${styles.ctaSection}`}>
         <div className={styles.container}>
@@ -306,7 +306,7 @@ export default function HomeLayout() {
                 {t('cta.docs')}
               </a>
               <a
-                href="https://github.com/bpodwinski/rs-grid"
+                href="https://github.com/ruxelion/rs-grid"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.btnOutline}
