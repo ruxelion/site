@@ -24,8 +24,6 @@ jobs:
     steps:
       - name: Checkout ruxelion-site
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.DEPLOY_TOKEN }}
 
       - name: Checkout rs-grid
         uses: actions/checkout@v4
@@ -76,4 +74,5 @@ jobs:
           git add docs/public/wasm docs/public/demos
           git diff --staged --quiet && echo "Rien à commiter" && exit 0
           git commit -m "chore: rebuild WASM demos from rs-grid@${{ github.event.inputs.rs_grid_ref || github.event.client_payload.ref || 'main' }}"
+          git remote set-url origin https://x-access-token:${{ secrets.DEPLOY_TOKEN }}@github.com/${{ github.repository }}
           git push
