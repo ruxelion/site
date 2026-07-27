@@ -26,10 +26,12 @@ programmation via `GridCommand::SetColumnFilter` /
 
 Activez la [ligne de filtre flottante](#ligne-de-filtre-flottante) et
 cliquez sur la petite icône en forme d'entonnoir d'une cellule pour
-ouvrir un popup avec un `<select>` d'opérateur (Contient, Égal,
-Supérieur à, ...), un `<input>` de valeur, la liste à cases à cocher
-(voir ci-dessous), et des boutons Appliquer / Effacer pour cette
-colonne.
+ouvrir un popup pour cette colonne. Une ligne « Text Filter » repliée
+se déplie (clic, ou `Entrée`/`Espace`) en un panneau flottant à côté du
+popup, avec un `<select>` d'opérateur (Contient, Égal, Supérieur à,
+...) et un `<input>` de valeur ; la liste à cases à cocher (voir
+ci-dessous) et les boutons Appliquer / Effacer restent affichés
+directement dans le popup principal.
 
 - L'icône entonnoir de la ligne de filtre change de couleur quand la
   colonne a une condition active **ou** un filtre par valeurs — elle
@@ -54,11 +56,11 @@ restriction) sauf si un filtre par valeurs est déjà actif dessus.
 - La liste est construite via `GridModel::unique_values(col_key, cap)`,
   qui parcourt jusqu'à `MAX_CLIENT_SORT_ROWS` lignes et renvoie
   `UniqueValues::Values` (triées) ou `UniqueValues::TooMany { cap }` dès
-  que le nombre de valeurs distinctes dépasse `cap` (200 dans le popup
-  intégré) — un message remplace alors la liste, et Appliquer laisse
-  intacte la partie « liste à cocher » du filtre pour cette colonne
-  jusqu'à ce qu'elle soit réduite autrement (ex. via le filtre par
-  condition).
+  que le nombre de valeurs distinctes dépasse `cap`. Le popup intégré ne
+  transmet aucune limite pratique, donc chaque valeur distincte est
+  listée quelle que soit la cardinalité de la colonne — `TooMany` n'a
+  d'importance que si vous construisez votre propre interface de liste
+  avec un `cap` plus restreint.
 - Le champ de recherche masque seulement les lignes non correspondantes
   (`display: none`) ; il ne perd jamais leur état coché.
 - « (Tout sélectionner) » est un vrai contrôle tri-état (coché / décoché
@@ -79,11 +81,11 @@ par défaut ; activez-la avec `GridCommand::SetShowFilterRow(true)` (ou
 `GridCanvas::set_show_filter_row(true)`).
 
 - Chaque cellule affiche la valeur de filtre actuelle de la colonne, ou
-  un texte de substitution « Filter... » si aucune n'est définie — lue
-  au mieux, quel que soit l'opérateur utilisé pour la définir (taper
-  dans la ligne applique toujours `FilterOp::Contains`, la même
-  simplification qu'AG Grid applique elle-même pour les conditions
-  qu'elle ne peut pas représenter en ligne).
+  rien si aucune n'est définie — lue au mieux, quel que soit
+  l'opérateur utilisé pour la définir (taper dans la ligne applique
+  toujours `FilterOp::Contains`, la même simplification qu'AG Grid
+  applique elle-même pour les conditions qu'elle ne peut pas
+  représenter en ligne).
 - Cliquez sur une cellule pour ouvrir un champ de saisie ; `Entrée` ou un
   clic ailleurs applique le filtre, `Échap` annule sans appliquer.
 - Chaque cellule a aussi sa propre petite icône en forme d'entonnoir,

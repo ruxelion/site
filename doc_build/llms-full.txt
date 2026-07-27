@@ -3659,9 +3659,11 @@ programmatically via `GridCommand::SetColumnFilter` /
 ## Filter popup (interactive UI)
 
 Enable the [floating filter row](#floating-filter-row) and click a
-cell's small funnel icon to open a popup with an operator `<select>`
-(Contains, Equals, Greater than, ...), a value `<input>`, the value
-checklist (see below), and Apply / Clear buttons for that column.
+cell's small funnel icon to open a popup for that column. A collapsed
+"Text Filter" row expands (click, or `Enter`/`Space`) into a flyout
+panel beside the popup with an operator `<select>` (Contains, Equals,
+Greater than, ...) and a value `<input>`; the value checklist (see
+below) and the Apply / Clear buttons stay inline in the main popup.
 
 - The floating filter row's funnel icon changes color when the column
   has an active condition **or** value filter, so it doubles as an
@@ -3684,10 +3686,10 @@ filter is already active for it.
 - The list is built from `GridModel::unique_values(col_key, cap)`,
   which scans up to `MAX_CLIENT_SORT_ROWS` rows and returns
   `UniqueValues::Values` (sorted) or `UniqueValues::TooMany { cap }`
-  once the distinct count exceeds `cap` (200 in the built-in popup) — a
-  message replaces the list in that case, and the checklist half of the
-  filter is left untouched by Apply until narrowed down some other way
-  (e.g. the condition filter).
+  once the distinct count exceeds `cap`. The built-in popup passes no
+  practical cap, so every distinct value is listed regardless of column
+  cardinality — `TooMany` only matters if you build a custom checklist
+  UI around a smaller `cap` of your own.
 - The search box only hides non-matching rows (`display: none`); it
   never discards their checked state.
 - "(Select All)" is a real tri-state control (checked / unchecked /
@@ -3705,11 +3707,11 @@ only click path to the [filter popup](#filter-popup-interactive-ui)
 above. Off by default; enable it with `GridCommand::SetShowFilterRow(true)`
 (or `GridCanvas::set_show_filter_row(true)`).
 
-- Each cell shows the column's current filter value, or a `"Filter..."`
-  placeholder when none is set — read best-effort regardless of which
-  operator was used to set it (typing into the row always sets
-  `FilterOp::Contains`, the same simplification AG Grid's own floating
-  filter makes for conditions it can't represent inline).
+- Each cell shows the column's current filter value, or nothing when
+  none is set — read best-effort regardless of which operator was used
+  to set it (typing into the row always sets `FilterOp::Contains`, the
+  same simplification AG Grid's own floating filter makes for
+  conditions it can't represent inline).
 - Click a cell to open an input and type; `Enter` or clicking elsewhere
   applies the filter, `Escape` cancels without applying.
 - Each cell also has its own small funnel icon that opens the full
@@ -4250,15 +4252,15 @@ viewport at any moment, regardless of how many rows exist in the datasource.
 
 Time per frame (µs)60fps budget: 16,600 µs
 
-20 cols × 10k rows27.0 µs
+20 cols × 10k rows41.5 µs
 
-50 cols × 1M rows42.1 µs
+50 cols × 1M rows52.1 µs
 
-100 cols × 10M rows52.0 µs
+100 cols × 10M rows64.6 µs
 
-1 000 cols × 1B rows53.1 µs
+1 000 cols × 1B rows65.9 µs
 
-50 cols × 1 quadrillion43.2 µs
+50 cols × 1 quadrillion54.0 µs
 
 All configs render in 65–89 µs — less than 0.6% of the 16.6 ms frame budget at 60fps. Row count has zero impact on frame time.
 
@@ -4274,17 +4276,17 @@ Varying row count (1 000 cols fixed)
 
 | Configuration | Hit-test time |
 | --- | --- |
-| 1 000 rows, 1 000 cols | 29.6 ns |
-| 1 billion rows, 1 000 cols | 39.5 ns |
-| 1 quadrillion rows, 1 000 cols | 27.9 ns |
+| 1 000 rows, 1 000 cols | 48.6 ns |
+| 1 billion rows, 1 000 cols | 74.0 ns |
+| 1 quadrillion rows, 1 000 cols | 45.9 ns |
 
 Varying column count (O(log n) in action)
 
 | Columns | Hit-test time |
 | --- | --- |
-| 10 cols | 10.8 ns |
-| 100 cols | 13.7 ns |
-| 1 000 cols | 17.6 ns |
+| 10 cols | 18.8 ns |
+| 100 cols | 23.9 ns |
+| 1 000 cols | 34.5 ns |
 
 
 The 1.7× increase from 10 → 1 000 columns (10 → 18 ns) reflects the binary search over column
@@ -4300,26 +4302,26 @@ Varying row count — FnDataSource (20 cols fixed)
 
 | Rows | Init time |
 | --- | --- |
-| 1 000 | 2.4 µs |
-| 100 000 | 2.8 µs |
-| 1 000 000 | 2.7 µs |
-| 100 000 000 | 2.7 µs |
-| 1 000 000 000 | 2.7 µs |
-| 1 000 000 000 000 000 | 2.7 µs |
+| 1 000 | 3.0 µs |
+| 100 000 | 3.2 µs |
+| 1 000 000 | 3.2 µs |
+| 100 000 000 | 3.1 µs |
+| 1 000 000 000 | 3.2 µs |
+| 1 000 000 000 000 000 | 3.1 µs |
 
 Flat regardless of row count — O(n_cols), not O(n_rows).
 
 Varying column count (1M rows fixed)
 
-5 cols0.7 µs
+5 cols0.8 µs
 
-20 cols2.6 µs
+20 cols3.2 µs
 
-50 cols7.1 µs
+50 cols8.3 µs
 
-100 cols15.0 µs
+100 cols17.0 µs
 
-1 000 cols147.6 µs
+1 000 cols170.1 µs
 
 Initializing a grid with **1 quadrillion virtual rows** takes the same \~5 µs as a grid with
 1 000 rows. If you need all data in memory (`VecDataSource`), initialization is still dominated
@@ -4334,15 +4336,15 @@ sort direction on the same column.
 
 100 000 rows — sort time (ms)
 
-Numeric sort (cold)13.7 ms
+Numeric sort (cold)16.9 ms
 
 Radix sort, first call — key extraction + sort
 
-Numeric sort (cached)10.3 ms
+Numeric sort (cached)11.8 ms
 
 Radix sort, direction toggle — keys reused from cache
 
-String sort (cold)14.7 ms
+String sort (cold)21.7 ms
 
 Lexicographic comparison sort
 
@@ -4367,7 +4369,7 @@ For large datasets (> 100k rows), prefer `FnDataSource` with server-side paginat
 See [FnDataSource](/data/fn-datasource.md) and [PageCache](/data/page-cache.md) for implementation details.
 
 
-Measured with Criterion (sample-size=10) on `ubuntu-22.04` · commit `8386779` · July 22, 2026. Updated automatically on every push to `main` via CI.
+Measured with Criterion (sample-size=10) on `ubuntu-22.04` · commit `226b085` · July 22, 2026. Updated automatically on every push to `main` via CI.
 
 
 
@@ -5699,9 +5701,9 @@ A data grid that never slows down. Scroll through millions of rows as smoothly a
 
 ∞rows, zero lag
 
-<43 µsper frame at 60fps
+<53 µsper frame at 60fps
 
-27.9 nshit-test (1 quadrillion rows)
+45.9 nshit-test (1 quadrillion rows)
 
 Pure Rustcompiled to WASM
 

@@ -22,9 +22,11 @@ programmatically via `GridCommand::SetColumnFilter` /
 ## Filter popup (interactive UI)
 
 Enable the [floating filter row](#floating-filter-row) and click a
-cell's small funnel icon to open a popup with an operator `<select>`
-(Contains, Equals, Greater than, ...), a value `<input>`, the value
-checklist (see below), and Apply / Clear buttons for that column.
+cell's small funnel icon to open a popup for that column. A collapsed
+"Text Filter" row expands (click, or `Enter`/`Space`) into a flyout
+panel beside the popup with an operator `<select>` (Contains, Equals,
+Greater than, ...) and a value `<input>`; the value checklist (see
+below) and the Apply / Clear buttons stay inline in the main popup.
 
 - The floating filter row's funnel icon changes color when the column
   has an active condition **or** value filter, so it doubles as an
@@ -47,10 +49,10 @@ filter is already active for it.
 - The list is built from `GridModel::unique_values(col_key, cap)`,
   which scans up to `MAX_CLIENT_SORT_ROWS` rows and returns
   `UniqueValues::Values` (sorted) or `UniqueValues::TooMany { cap }`
-  once the distinct count exceeds `cap` (200 in the built-in popup) — a
-  message replaces the list in that case, and the checklist half of the
-  filter is left untouched by Apply until narrowed down some other way
-  (e.g. the condition filter).
+  once the distinct count exceeds `cap`. The built-in popup passes no
+  practical cap, so every distinct value is listed regardless of column
+  cardinality — `TooMany` only matters if you build a custom checklist
+  UI around a smaller `cap` of your own.
 - The search box only hides non-matching rows (`display: none`); it
   never discards their checked state.
 - "(Select All)" is a real tri-state control (checked / unchecked /
@@ -68,11 +70,11 @@ only click path to the [filter popup](#filter-popup-interactive-ui)
 above. Off by default; enable it with `GridCommand::SetShowFilterRow(true)`
 (or `GridCanvas::set_show_filter_row(true)`).
 
-- Each cell shows the column's current filter value, or a `"Filter..."`
-  placeholder when none is set — read best-effort regardless of which
-  operator was used to set it (typing into the row always sets
-  `FilterOp::Contains`, the same simplification AG Grid's own floating
-  filter makes for conditions it can't represent inline).
+- Each cell shows the column's current filter value, or nothing when
+  none is set — read best-effort regardless of which operator was used
+  to set it (typing into the row always sets `FilterOp::Contains`, the
+  same simplification AG Grid's own floating filter makes for
+  conditions it can't represent inline).
 - Click a cell to open an input and type; `Enter` or clicking elsewhere
   applies the filter, `Escape` cancels without applying.
 - Each cell also has its own small funnel icon that opens the full
